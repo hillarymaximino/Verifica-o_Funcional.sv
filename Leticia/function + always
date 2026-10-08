@@ -1,0 +1,24 @@
+function automatic int contar_vazias(input logic [19:0][3:0] v); // Cria uma função inteira que recebe de parâmetro um logic de 20 espaços com 4 bits cada
+        int n; // Cria um inteiro n
+        n = 0; // Esse n inicia em 0
+        for (int i = 0; i < 20; i++) // Enquanto i < 20, esse i vai sendo interado
+            if (v[i] === POS_VAZIA) n++; // Se o vetor no indice I estiver vazio (POS_VAZIA = F -> Vazio), n é incrementado
+        return n; // Retorna o valor de n exatamente na posição em que existe um vetor vazio
+    endfunction
+
+always @(negedge clk) begin // Sempre na borda de descida do clk
+  if (enable === 1'b1 && rst === 1'b0) begin // Se enable está ativado e o reset desativado
+    if (digitos_valid === 1'b1) begin // Se digitos valid está ativo
+      if (mon_largura_atual == 0) begin // Se a largura atual = 0
+        mon_n_pulsos     <= mon_n_pulsos + 1; // mon_n_pulsos é incrementado
+        mon_ultimo_valor <= digitos_value; // mon_ultimo_valor recebe o valor que está em digitos_value
+        $display("[%0t] MONITOR: digitos_valid = 1, digitos_value = %h", $time, digitos_value); 
+      end // Imprime a mensagem de digitos valid = 1 e o valor que está em digitos_value
+    mon_largura_atual <= mon_largura_atual + 1; 
+    end // Essa mon_largura_atual vai ser interado
+     else if (mon_largura_atual != 0) begin
+      mon_ultima_largura <= mon_largura_atual;
+      mon_largura_atual  <= 0; 
+    end
+  end
+end
